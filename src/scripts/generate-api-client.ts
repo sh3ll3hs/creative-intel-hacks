@@ -12,7 +12,7 @@ const NULL = ts.factory.createLiteralTypeNode(ts.factory.createNull()); // `null
  * to support more than the defaults.
  */
 const generateTypeSchema = async () => {
-    const ast = await openapiTS("http://localhost:4000/openapi.json", {
+    const ast = await openapiTS("http://localhost:8000/openapi.json", {
         transform(schemaObject) {
             if (schemaObject.format === "binary") {
                 return schemaObject.nullable

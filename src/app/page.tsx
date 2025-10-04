@@ -32,7 +32,11 @@ export default function Home() {
 
     const { mutate: updateJob, isPending: updatingJob } = useMutation({
         mutationFn: async (value: string) => {
-            const jobData = await updateJobAction(jobId!, value);
+            const jobData = await updateJobAction(
+                jobId!,
+                value,
+                uploadedVideo!.id
+            );
 
             return jobData;
         },
