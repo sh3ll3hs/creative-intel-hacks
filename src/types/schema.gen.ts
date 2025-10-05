@@ -62,7 +62,15 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Video Understanding */
+        /**
+         * Video Understanding
+         * @description Complete video analysis endpoint:
+         *     1. Get video URL from Supabase or request
+         *     2. Upload/reference video in TwelveLabs
+         *     3. Analyze video with structured JSON schema
+         *     4. Store results in Supabase ads.description
+         *     5. Return analysis summary
+         */
         post: operations["video_understanding__job_id__video_post"];
         delete?: never;
         options?: never;
@@ -127,6 +135,43 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+        };
+        /**
+         * VideoAnalysisRequest
+         * @description Model for video analysis request.
+         */
+        VideoAnalysisRequest: {
+            /**
+             * Video Url
+             * @description URL or path to video file
+             */
+            video_url?: string | null;
+            /**
+             * Use Existing Video
+             * @description Whether to use video already in ads table
+             * @default false
+             */
+            use_existing_video: boolean;
+        };
+        /**
+         * VideoAnalysisResponse
+         * @description Model for video analysis response.
+         */
+        VideoAnalysisResponse: {
+            /** Success */
+            success: boolean;
+            /** Job Id */
+            job_id: string;
+            /** Ads Id */
+            ads_id: string;
+            /** Video Id */
+            video_id?: string | null;
+            /** Analysis */
+            analysis?: {
+                [key: string]: unknown;
+            } | null;
+            /** Error */
+            error?: string | null;
         };
     };
     responses: never;
@@ -221,7 +266,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["VideoAnalysisRequest"] | null;
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -229,7 +278,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["VideoAnalysisResponse"];
                 };
             };
             /** @description Validation Error */

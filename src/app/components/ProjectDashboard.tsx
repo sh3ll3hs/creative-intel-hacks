@@ -4,6 +4,7 @@ import { Badge } from "../../components/ui/badge";
 import { motion } from "motion/react";
 import { LogOut, Calendar, Plus } from "lucide-react";
 import type { Project } from "@/types/shared";
+import { TowaIcon } from "./TowaIcon";
 
 interface ProjectDashboardProps {
     username: string;
@@ -45,13 +46,11 @@ export function ProjectDashboard({
                         <div className="flex items-center justify-between">
                             {/* Left: Logo */}
                             <div className="flex items-center gap-4">
-                                <div className="text-2xl font-bold tracking-tight text-[#E5E5E5]">
-                                    T
-                                </div>
+                                <TowaIcon className="h-8 w-auto" />
                                 <span className="text-lg font-medium tracking-wider text-[#E5E5E5]">
-                                    Tunnel
+                                    TOWA
                                 </span>
-                                <span className="text-sm text-[#666666] ml-4 uppercase tracking-wider">
+                                <span className="text-sm text-[#666666] ml-2 uppercase tracking-wider">
                                     projects
                                 </span>
                             </div>

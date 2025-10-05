@@ -48,7 +48,7 @@ export default function UploadPage() {
     // Video analysis mutation
     const { mutate: analyzeVideo, isPending: analyzingVideo } = useMutation({
         mutationFn: async () => {
-            const response = await apiClient.POST("/{job_id}/video-dummy", {
+            const response = await apiClient.POST("/{job_id}/video", {
                 params: {
                     path: {
                         job_id: projectId as string,
