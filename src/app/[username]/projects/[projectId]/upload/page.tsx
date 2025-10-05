@@ -112,21 +112,22 @@ export default function UploadPage() {
     });
 
     // Persona search mutation
-    const { mutate: createPersonas } = useMutation({
-        mutationFn: async () => {
-            const response = await apiClient.POST("/{job_id}/search", {
-                params: {
-                    path: {
-                        job_id: projectId as string,
+    const { mutateAsync: createPersonas, isPending: creatingPersonas } =
+        useMutation({
+            mutationFn: async () => {
+                const response = await apiClient.POST("/{job_id}/search", {
+                    params: {
+                        path: {
+                            job_id: projectId as string,
+                        },
                     },
-                },
-                body: {
-                    sentence: prompt,
-                },
-            });
-            return response.data;
-        },
-    });
+                    body: {
+                        sentence: prompt,
+                    },
+                });
+                return response.data;
+            },
+        });
 
     const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -144,11 +145,9 @@ export default function UploadPage() {
         if (!uploadedVideo || !prompt.trim() || !uploadedAd) return;
 
         try {
-            // Step 1: Update job with demographic and ads_id
             await updateJob();
 
-            // Step 2: Fire off persona search (don't await - let it run in background)
-            createPersonas();
+            await createPersonas();
 
             // Navigate to dashboard immediately
             router.push(`/${username}/projects/${projectId}/dashboard`);
@@ -403,7 +402,8 @@ export default function UploadPage() {
                                 !prompt.trim() ||
                                 !uploadedVideo ||
                                 !uploadedAd ||
-                                updatingJob
+                                updatingJob ||
+                                creatingPersonas
                             }
                             className="w-full px-6 py-6 text-white border-2 border-transparent relative overflow-hidden group text-lg"
                             style={{

@@ -3,13 +3,15 @@ import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import { X } from "lucide-react";
 import type { Person } from "@/types/shared";
+import type { AnalysisData } from "@/app/actions/analysis";
 
 interface FeedbackPanelProps {
     people: Person[];
     onClose: () => void;
+    analysisData?: AnalysisData | null;
 }
 
-export function FeedbackPanel({ people, onClose }: FeedbackPanelProps) {
+export function FeedbackPanel({ people, onClose, analysisData = null }: FeedbackPanelProps) {
     const reactionCounts = people.reduce((acc, person) => {
         acc[person.reaction] = (acc[person.reaction] || 0) + 1;
         return acc;
@@ -113,7 +115,7 @@ export function FeedbackPanel({ people, onClose }: FeedbackPanelProps) {
                                 lineHeight: "1",
                             }}
                         >
-                            94.2%
+                            {analysisData ? `${analysisData.sentiment.positive}%` : "94.2%"}
                         </div>
                         <div
                             className="text-white/60"
@@ -124,7 +126,7 @@ export function FeedbackPanel({ people, onClose }: FeedbackPanelProps) {
                                 letterSpacing: "0.05em",
                             }}
                         >
-                            Accuracy Rate
+                            Positive Sentiment
                         </div>
                     </div>
                 </div>
@@ -332,54 +334,26 @@ export function FeedbackPanel({ people, onClose }: FeedbackPanelProps) {
                         }}
                     >
                         <ul className="space-y-3">
-                            <li
-                                className="flex items-start gap-3 text-white/70"
-                                style={{
-                                    fontFamily: "Inter, system-ui, sans-serif",
-                                    fontSize: "12px",
-                                    fontWeight: "400",
-                                    lineHeight: "1.4",
-                                }}
-                            >
-                                <span className="text-white/40 mt-1">•</span>
-                                Gen X shows highest engagement (67%)
-                            </li>
-                            <li
-                                className="flex items-start gap-3 text-white/70"
-                                style={{
-                                    fontFamily: "Inter, system-ui, sans-serif",
-                                    fontSize: "12px",
-                                    fontWeight: "400",
-                                    lineHeight: "1.4",
-                                }}
-                            >
-                                <span className="text-white/40 mt-1">•</span>
-                                Fintech professionals most receptive
-                            </li>
-                            <li
-                                className="flex items-start gap-3 text-white/70"
-                                style={{
-                                    fontFamily: "Inter, system-ui, sans-serif",
-                                    fontSize: "12px",
-                                    fontWeight: "400",
-                                    lineHeight: "1.4",
-                                }}
-                            >
-                                <span className="text-white/40 mt-1">•</span>
-                                Urban demographics prefer innovation
-                            </li>
-                            <li
-                                className="flex items-start gap-3 text-white/70"
-                                style={{
-                                    fontFamily: "Inter, system-ui, sans-serif",
-                                    fontSize: "12px",
-                                    fontWeight: "400",
-                                    lineHeight: "1.4",
-                                }}
-                            >
-                                <span className="text-white/40 mt-1">•</span>
-                                25-49 age group drives sentiment
-                            </li>
+                            {(analysisData?.highlights || [
+                                "Gen X shows highest engagement (67%)",
+                                "Fintech professionals most receptive",
+                                "Urban demographics prefer innovation",
+                                "25-49 age group drives sentiment"
+                            ]).map((insight, index) => (
+                                <li
+                                    key={index}
+                                    className="flex items-start gap-3 text-white/70"
+                                    style={{
+                                        fontFamily: "Inter, system-ui, sans-serif",
+                                        fontSize: "12px",
+                                        fontWeight: "400",
+                                        lineHeight: "1.4",
+                                    }}
+                                >
+                                    <span className="text-white/40 mt-1">•</span>
+                                    {insight}
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </div>

@@ -14,6 +14,7 @@ interface InteractiveNetworkVizProps {
     isRunning?: boolean;
     onRunSimulation?: () => void;
     people?: Person[];
+    showInterest?: boolean;
 }
 
 const generatePersonas = (): PersonaNode[] => {
@@ -193,6 +194,7 @@ export function InteractiveNetworkViz({
     isRunning = false,
     onRunSimulation,
     people,
+    showInterest = false,
 }: InteractiveNetworkVizProps) {
     // Note: isRunning prop is available for future use
     // Use the people prop if provided, otherwise generate personas
@@ -526,30 +528,32 @@ export function InteractiveNetworkViz({
                                 </span>
                             </div>
 
-                            <div className="mb-2">
-                                <div className="text-xs text-white/60 mb-1">
-                                    Interest
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
-                                        <motion.div
-                                            className="h-full rounded-full"
-                                            style={{
-                                                backgroundColor:
-                                                    hoveredNode.color,
-                                            }}
-                                            initial={{ width: 0 }}
-                                            animate={{
-                                                width: `${hoveredNode.engagement}%`,
-                                            }}
-                                            transition={{ duration: 0.8 }}
-                                        />
+                            {showInterest && (
+                                <div className="mb-2">
+                                    <div className="text-xs text-white/60 mb-1">
+                                        Interest
                                     </div>
-                                    <span className="text-xs text-white/80">
-                                        {Math.round(hoveredNode.engagement)}%
-                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
+                                            <motion.div
+                                                className="h-full rounded-full"
+                                                style={{
+                                                    backgroundColor:
+                                                        hoveredNode.color,
+                                                }}
+                                                initial={{ width: 0 }}
+                                                animate={{
+                                                    width: `${hoveredNode.engagement}%`,
+                                                }}
+                                                transition={{ duration: 0.8 }}
+                                            />
+                                        </div>
+                                        <span className="text-xs text-white/80">
+                                            {Math.round(hoveredNode.engagement)}%
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             <div className="text-sm text-white/80 italic">
                                 &ldquo;{hoveredNode.feedback}&rdquo;

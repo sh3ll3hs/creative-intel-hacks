@@ -10,7 +10,11 @@ import { InteractiveNetworkViz } from "@/app/components/InteractiveNetworkViz";
 import { TowaReactionModal } from "@/app/components/TowaReactionModal";
 import { PersonasPanel } from "@/app/components/PersonasPanel";
 import { MissionStatus } from "@/app/components/MissionStatus";
-import { getPersonasByJobId, getJobById, getPersonaResponses } from "@/app/actions/personas";
+import {
+    getPersonasByJobId,
+    getJobById,
+    getPersonaResponses,
+} from "@/app/actions/personas";
 import { mockPeople } from "@/lib/mockPeople";
 import type { Person } from "@/types/shared";
 import apiClient from "@/lib/api-client";
@@ -21,6 +25,16 @@ export default function DashboardPage() {
 
     const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
     const [showFeedback, setShowFeedback] = useState(false);
+
+    // Fetch persona responses to determine state
+    const { data: personaResponses, isLoading: responsesLoading } = useQuery({
+        queryKey: ["personaResponses", projectId],
+        queryFn: () => getPersonaResponses(projectId as string),
+        enabled: !!projectId,
+    });
+
+    // Determine if we're in responses state (STATE B) or personas state (STATE A)
+    const isResponsesState = personaResponses && personaResponses.length > 0;
 
     // Fetch personas for this job (projectId = jobId)
     const { data: fetchedPersonas, isLoading: personasLoading } = useQuery({
@@ -36,14 +50,6 @@ export default function DashboardPage() {
         enabled: !!projectId,
     });
 
-    // Fetch persona responses with polling
-    const { data: personaResponses, isLoading: responsesLoading } = useQuery({
-        queryKey: ["personaResponses", projectId],
-        queryFn: () => getPersonaResponses(projectId as string),
-        enabled: !!projectId,
-        refetchInterval: 5000, // Poll every 5 seconds
-    });
-
     const isLoading = personasLoading || jobLoading;
 
     // Use fetched personas if available, otherwise fallback to mock data
@@ -53,18 +59,19 @@ export default function DashboardPage() {
             : mockPeople;
 
     // Persona response mutation
-    const { mutateAsync: createResponses, isPending: creatingResponses } = useMutation({
-        mutationFn: async () => {
-            const response = await apiClient.POST("/{job_id}/responses", {
-                params: {
-                    path: {
-                        job_id: projectId as string,
+    const { mutateAsync: createResponses, isPending: creatingResponses } =
+        useMutation({
+            mutationFn: async () => {
+                const response = await apiClient.POST("/{job_id}/responses", {
+                    params: {
+                        path: {
+                            job_id: projectId as string,
+                        },
                     },
-                },
-            });
-            return response.data;
-        },
-    });
+                });
+                return response.data;
+            },
+        });
 
     const handleRunSimulation = async () => {
         try {
@@ -136,6 +143,7 @@ export default function DashboardPage() {
                         people={personas}
                         isRunning={false}
                         onRunSimulation={handleRunSimulation}
+                        showInterest={isResponsesState}
                     />
                 </div>
 
@@ -144,6 +152,7 @@ export default function DashboardPage() {
                     filteredPeople={personas}
                     onViewFeedback={() => setShowFeedback(true)}
                     personaResponses={personaResponses}
+                    isResponsesState={isResponsesState}
                 />
             </div>
 
@@ -178,7 +187,9 @@ export default function DashboardPage() {
                         />
                         <span className="relative z-10 flex items-center gap-2">
                             <Play className="w-5 h-5" />
-                            {creatingResponses ? "Generating Responses..." : "Run Simulation"}
+                            {creatingResponses
+                                ? "Generating Responses..."
+                                : "Run Simulation"}
                         </span>
                     </Button>
                 </motion.div>

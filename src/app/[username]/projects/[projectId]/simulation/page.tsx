@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ChevronLeft, LogOut } from "lucide-react";
 import { CenteredVideoAnalysis } from "@/app/components/CenteredVideoAnalysis";
 import { TowaReactionModal } from "@/app/components/TowaReactionModal";
-import { FeedbackPanel } from "@/app/components/FeedbackPanel";
+import { PersonasPanel } from "@/app/components/PersonasPanel";
 import { SearchProgress } from "@/app/components/SearchProgress";
 import { ProfilesStream } from "@/app/components/ProfilesStream";
 import {
@@ -16,9 +16,18 @@ import {
     ExpandedReport,
 } from "@/app/components/AnalysisReport";
 import { VideoAnalysisSidebar } from "@/app/components/VideoAnalysisSidebar";
-import { getPersonasByJobId, getJobById } from "@/app/actions/personas";
+import {
+    getPersonasByJobId,
+    getJobById,
+    getPersonaResponses,
+} from "@/app/actions/personas";
+import {
+    generateAnalysisFromResponses,
+    type AnalysisData,
+} from "@/app/actions/analysis";
 import { mockPeople } from "@/lib/mockPeople";
 import type { Person } from "@/types/shared";
+import { FeedbackPanel } from "@/app/components/FeedbackPanel";
 
 export default function SimulationPage() {
     const { username, projectId } = useParams();
@@ -35,6 +44,9 @@ export default function SimulationPage() {
     const [showAnalysisReport, setShowAnalysisReport] = useState(false);
     const [showExpandedReport, setShowExpandedReport] = useState(false);
 
+    const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+
     // Prompt state
     const [prompt, setPrompt] = useState("");
 
@@ -49,6 +61,13 @@ export default function SimulationPage() {
     const { data: job, isLoading: jobLoading } = useQuery({
         queryKey: ["job", projectId],
         queryFn: () => getJobById(projectId as string),
+        enabled: !!projectId,
+    });
+
+    // Fetch persona responses
+    const { data: personaResponses, isLoading: responsesLoading } = useQuery({
+        queryKey: ["personaResponses", projectId],
+        queryFn: () => getPersonaResponses(projectId as string),
         enabled: !!projectId,
     });
 
@@ -72,7 +91,7 @@ export default function SimulationPage() {
         }
     };
 
-    const startSimulation = (people: Person[]) => {
+    const startSimulation = async (people: Person[]) => {
         setIsSimulating(true);
         setShowSearchProgress(true);
         setShowProfilesStream(false);
@@ -89,10 +108,27 @@ export default function SimulationPage() {
                         setShowSearchProgress(false);
                         setShowProfilesStream(true);
 
-                        setTimeout(() => {
+                        setTimeout(async () => {
                             setShowProfilesStream(false);
-                            setShowAnalysisReport(true);
-                            setIsSimulating(false);
+
+                            // Start AI analysis
+                            setIsAnalyzing(true);
+                            try {
+                                const analysis =
+                                    await generateAnalysisFromResponses(
+                                        projectId as string
+                                    );
+                                setAnalysisData(analysis);
+                            } catch (error) {
+                                console.error(
+                                    "Error generating analysis:",
+                                    error
+                                );
+                            } finally {
+                                setIsAnalyzing(false);
+                                setShowAnalysisReport(true);
+                                setIsSimulating(false);
+                            }
                         }, 3000);
                     }, 1000);
                     return 100;
@@ -101,6 +137,19 @@ export default function SimulationPage() {
             });
         }, 300);
     };
+
+    // Auto-start simulation if we have persona responses but no analysis yet
+    useEffect(() => {
+        if (
+            personaResponses &&
+            personaResponses.length > 0 &&
+            !analysisData &&
+            !isSimulating &&
+            !isAnalyzing
+        ) {
+            startSimulation(personas);
+        }
+    }, [personaResponses]);
 
     if (isLoading) {
         return (
@@ -174,6 +223,8 @@ export default function SimulationPage() {
                 <VideoAnalysisSidebar
                     showAnalysisReport={showAnalysisReport}
                     onViewFeedback={() => setShowFeedback(true)}
+                    analysisData={analysisData}
+                    isAnalyzing={isAnalyzing}
                 />
             </div>
 
@@ -201,13 +252,14 @@ export default function SimulationPage() {
             </AnimatePresence>
 
             <AnimatePresence>
-                {showAnalysisReport && (
+                {/* {showAnalysisReport && (
                     <AnalysisReport
                         isVisible={showAnalysisReport}
                         people={personas}
                         onExpand={() => setShowExpandedReport(true)}
+                        analysisData={analysisData}
                     />
-                )}
+                )} */}
             </AnimatePresence>
 
             <AnimatePresence>
@@ -216,6 +268,7 @@ export default function SimulationPage() {
                         isOpen={showExpandedReport}
                         people={personas}
                         onClose={() => setShowExpandedReport(false)}
+                        analysisData={analysisData}
                     />
                 )}
             </AnimatePresence>
@@ -237,6 +290,7 @@ export default function SimulationPage() {
                     <FeedbackPanel
                         people={personas}
                         onClose={() => setShowFeedback(false)}
+                        analysisData={analysisData}
                     />
                 )}
             </AnimatePresence>
