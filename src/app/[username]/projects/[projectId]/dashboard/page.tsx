@@ -63,6 +63,37 @@ export default function DashboardPage() {
 
   return (
     <div className="h-screen bg-black text-white overflow-hidden relative">
+      {/* Animated Stars Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {Array.from({ length: 80 }).map((_, i) => {
+          const colors = ['bg-white', 'bg-blue-300', 'bg-purple-300', 'bg-cyan-300', 'bg-pink-300'];
+          const sizes = ['w-0.5 h-0.5', 'w-1 h-1', 'w-1.5 h-1.5', 'w-2 h-2'];
+          const randomColor = colors[Math.floor(Math.random() * colors.length)];
+          const randomSize = sizes[Math.floor(Math.random() * sizes.length)];
+          
+          return (
+            <motion.div
+              key={i}
+              className={`absolute ${randomSize} ${randomColor} rounded-full`}
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                opacity: [0, 1, 0],
+                scale: [0.5, 1, 0.5],
+              }}
+            transition={{
+              duration: Math.random() * 6 + 4,
+              repeat: Infinity,
+              delay: Math.random() * 8,
+              ease: "easeInOut",
+            }}
+            />
+          );
+        })}
+      </div>
+
       {/* Header */}
       <div className="border-b border-gray-800/50 bg-black/80 backdrop-blur-sm relative z-50">
         <div className="flex items-center justify-between px-6 py-4">
@@ -105,6 +136,7 @@ export default function DashboardPage() {
             isSimulating={false}
             searchComplete={false}
           />
+          
         </div>
 
         {/* Right Sidebar */}
@@ -113,6 +145,41 @@ export default function DashboardPage() {
           onViewFeedback={() => setShowFeedback(true)}
         />
       </div>
+
+      {/* Center Circle with Name */}
+      <motion.div
+        className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 cursor-pointer"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <motion.div
+          className="w-16 h-16 rounded-full border-2 border-white/20 bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500 backdrop-blur-sm flex items-center justify-center shadow-2xl group relative overflow-hidden"
+          style={{
+            boxShadow: "0 0 30px rgba(168, 85, 247, 0.5), 0 0 60px rgba(236, 72, 153, 0.3), 0 0 90px rgba(6, 182, 212, 0.2)"
+          }}
+          whileHover={{ 
+            scale: 1.1,
+            boxShadow: "0 0 40px rgba(168, 85, 247, 0.8), 0 0 80px rgba(236, 72, 153, 0.6), 0 0 120px rgba(6, 182, 212, 0.4)"
+          }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+        >
+          {/* Shine effect overlay */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-all duration-500" />
+          
+          {/* Glossy overlay */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300" />
+          
+          <motion.div
+            className="text-white text-xs font-bold text-center relative z-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            YOU
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
       {/* Fixed Run Simulation Button */}
       <motion.div
