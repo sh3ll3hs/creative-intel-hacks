@@ -24,7 +24,7 @@ import { UnifiedVideoInterface } from "./UnifiedVideoInterface";
 import { SearchProgress } from "./SearchProgress";
 import { ProfilesStream } from "./ProfilesStream";
 import { AnalysisReport, ExpandedReport } from "./AnalysisReport";
-import type { Project, Person } from "../App";
+import type { Project, Person } from "@/types/shared";
 
 interface CoreProductProps {
     project: Project;

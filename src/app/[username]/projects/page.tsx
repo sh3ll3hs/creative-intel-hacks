@@ -8,7 +8,7 @@ export default function Page() {
     const { username } = useParams();
     const router = useRouter();
     const handleProjectSelect = (project: Project) => {
-        router.push(`/${username}/projects/${project.id}`);
+        router.push(`/${username}/projects/${project.id}/upload`);
     };
 
     return (

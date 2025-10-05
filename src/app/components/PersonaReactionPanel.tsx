@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
     Dialog,
@@ -7,11 +6,11 @@ import {
     DialogHeader,
     DialogTitle,
     DialogDescription,
-} from "../../components/ui/dialog";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { X, Mic, PhoneOff, Plus, MessageSquare, Phone } from "lucide-react";
-import type { Person } from "../App";
+import type { Person } from "@/types/shared";
 
 interface PersonaReactionPanelProps {
     person: Person;
@@ -49,7 +48,7 @@ const getReactionColor = (reaction: string) => {
             };
         default:
             return {
-                bg: "from-purple-400/20 to-pink-400/20",
+                bg: "from-purple-400/20 to-blue-400/20",
                 border: "border-purple-400/40",
                 text: "text-purple-300",
                 label: "CURIOUS",

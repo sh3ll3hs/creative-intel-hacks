@@ -6,10 +6,10 @@ import {
     DialogHeader,
     DialogTitle,
     DialogDescription,
-} from "../../components/ui/dialog";
-import { Button } from "../../components/ui/button";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { X, Phone, Plus, UserCheck } from "lucide-react";
-import type { Person } from "../App";
+import type { Person } from "@/types/shared";
 
 interface TowaReactionModalProps {
     person: Person;

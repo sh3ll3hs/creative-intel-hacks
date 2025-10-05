@@ -1,9 +1,8 @@
-import { Card } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
+import { Card } from "./ui/card";
+import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
-import { X, TrendingUp, Users, MessageSquare, BarChart } from "lucide-react";
-import type { Person } from "../App";
+import { X } from "lucide-react";
+import type { Person } from "@/types/shared";
 
 interface FeedbackPanelProps {
     people: Person[];
@@ -26,97 +25,167 @@ export function FeedbackPanel({ people, onClose }: FeedbackPanelProps) {
         return acc;
     }, {} as Record<string, number>);
 
+    // Reaction color mapping for clean professional look
+    const getReactionColor = (reaction: string) => {
+        switch (reaction) {
+            case "intrigued":
+            case "inspired":
+                return "#22C55E"; // Green for positive
+            case "skeptical":
+                return "#F59E0B"; // Orange for neutral
+            default:
+                return "#EF4444"; // Red for negative
+        }
+    };
+
     return (
         <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "tween", duration: 0.3 }}
-            className="fixed right-0 top-0 h-full w-96 bg-black/95 border-l border-yellow-500/30 text-white font-mono z-50 overflow-y-auto"
+            className="fixed right-0 top-0 h-full w-96 text-white z-50 overflow-y-auto"
+            style={{
+                background: "linear-gradient(180deg, #000000 0%, #0A0A0A 100%)",
+                borderLeft: "1px solid #1C1C1C",
+                boxShadow: "-5px 0 15px rgba(0, 0, 0, 0.8)",
+                fontFamily: "Inter, system-ui, sans-serif",
+            }}
         >
-            <div className="p-6">
+            <div className="p-8">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl text-yellow-400">
+                <div className="flex items-center justify-between mb-8">
+                    <h2
+                        className="text-white tracking-wide"
+                        style={{
+                            fontFamily: "Inter, system-ui, sans-serif",
+                            fontSize: "18px",
+                            fontWeight: "500",
+                            letterSpacing: "0.05em",
+                        }}
+                    >
                         FEEDBACK SUMMARY
                     </h2>
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={onClose}
-                        className="text-white/70 hover:text-white hover:bg-white/10"
+                        className="text-white/50 hover:text-white hover:bg-white/5 border-0 transition-colors duration-200"
+                        style={{ width: "32px", height: "32px" }}
                     >
-                        <X className="w-5 h-5" />
+                        <X className="w-4 h-4" />
                     </Button>
                 </div>
 
-                {/* Overview Stats */}
-                <Card className="bg-yellow-950/20 border-yellow-500/30 p-4 mb-6">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="text-center">
-                            <div className="text-2xl text-yellow-400">
-                                {people.length}
-                            </div>
-                            <div className="text-xs text-white/60">
-                                TOTAL RESPONSES
-                            </div>
+                {/* Stats Row */}
+                <div className="grid grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <div
+                            className="text-white mb-1"
+                            style={{
+                                fontFamily: "Inter Mono, monospace",
+                                fontSize: "32px",
+                                fontWeight: "400",
+                                lineHeight: "1",
+                            }}
+                        >
+                            {people.length}
                         </div>
-                        <div className="text-center">
-                            <div className="text-2xl text-yellow-400">
-                                94.2%
-                            </div>
-                            <div className="text-xs text-white/60">
-                                ACCURACY RATE
-                            </div>
+                        <div
+                            className="text-white/60"
+                            style={{
+                                fontFamily: "Inter, system-ui, sans-serif",
+                                fontSize: "12px",
+                                fontWeight: "400",
+                                letterSpacing: "0.05em",
+                            }}
+                        >
+                            Total Responses
                         </div>
                     </div>
-                </Card>
-
-                {/* Reaction Distribution */}
-                <div className="mb-6">
-                    <div className="flex items-center gap-2 mb-3">
-                        <TrendingUp className="w-4 h-4 text-yellow-400" />
-                        <span className="text-sm text-yellow-400">
-                            REACTION BREAKDOWN
-                        </span>
+                    <div>
+                        <div
+                            className="text-white mb-1"
+                            style={{
+                                fontFamily: "Inter Mono, monospace",
+                                fontSize: "32px",
+                                fontWeight: "400",
+                                lineHeight: "1",
+                            }}
+                        >
+                            94.2%
+                        </div>
+                        <div
+                            className="text-white/60"
+                            style={{
+                                fontFamily: "Inter, system-ui, sans-serif",
+                                fontSize: "12px",
+                                fontWeight: "400",
+                                letterSpacing: "0.05em",
+                            }}
+                        >
+                            Accuracy Rate
+                        </div>
                     </div>
+                </div>
 
-                    <div className="space-y-3">
+                {/* Separator */}
+                <div className="w-full h-px bg-gray-800 mb-8"></div>
+
+                {/* Reaction Breakdown */}
+                <div className="mb-8">
+                    <h3
+                        className="text-white/90 mb-4"
+                        style={{
+                            fontFamily: "Inter, system-ui, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            letterSpacing: "0.05em",
+                        }}
+                    >
+                        Reaction Breakdown
+                    </h3>
+
+                    <div className="space-y-4">
                         {Object.entries(reactionCounts).map(
                             ([reaction, count]) => {
                                 const percentage = (
                                     (count / people.length) *
                                     100
                                 ).toFixed(1);
+                                const color = getReactionColor(reaction);
                                 return (
-                                    <div key={reaction} className="space-y-2">
-                                        <div className="flex items-center justify-between text-sm">
-                                            <Badge
-                                                className={`${
-                                                    reaction === "intrigued"
-                                                        ? "bg-green-600"
-                                                        : reaction ===
-                                                          "inspired"
-                                                        ? "bg-blue-600"
-                                                        : "bg-orange-600"
-                                                } text-white`}
+                                    <div key={reaction}>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span
+                                                className="text-white/80 capitalize"
+                                                style={{
+                                                    fontFamily:
+                                                        "Inter, system-ui, sans-serif",
+                                                    fontSize: "13px",
+                                                    fontWeight: "400",
+                                                }}
                                             >
-                                                {reaction.toUpperCase()}
-                                            </Badge>
-                                            <span className="text-white/70">
+                                                {reaction}
+                                            </span>
+                                            <span
+                                                className="text-white/60"
+                                                style={{
+                                                    fontFamily:
+                                                        "Inter Mono, monospace",
+                                                    fontSize: "12px",
+                                                    fontWeight: "400",
+                                                }}
+                                            >
                                                 {count} ({percentage}%)
                                             </span>
                                         </div>
-                                        <div className="w-full bg-white/10 rounded-full h-2">
+                                        <div className="w-full h-1 bg-white/5 rounded-sm overflow-hidden">
                                             <motion.div
-                                                className={`h-2 rounded-full ${
-                                                    reaction === "intrigued"
-                                                        ? "bg-green-500"
-                                                        : reaction ===
-                                                          "inspired"
-                                                        ? "bg-blue-500"
-                                                        : "bg-orange-500"
-                                                }`}
+                                                className="h-1 rounded-sm"
+                                                style={{
+                                                    backgroundColor: color,
+                                                }}
                                                 initial={{ width: 0 }}
                                                 animate={{
                                                     width: `${percentage}%`,
@@ -124,6 +193,7 @@ export function FeedbackPanel({ people, onClose }: FeedbackPanelProps) {
                                                 transition={{
                                                     delay: 0.5,
                                                     duration: 1,
+                                                    ease: "easeOut",
                                                 }}
                                             />
                                         </div>
@@ -134,28 +204,51 @@ export function FeedbackPanel({ people, onClose }: FeedbackPanelProps) {
                     </div>
                 </div>
 
-                {/* Demographics */}
-                <div className="mb-6">
-                    <div className="flex items-center gap-2 mb-3">
-                        <Users className="w-4 h-4 text-yellow-400" />
-                        <span className="text-sm text-yellow-400">
-                            TOP INDUSTRIES
-                        </span>
-                    </div>
+                {/* Separator */}
+                <div className="w-full h-px bg-gray-800 mb-8"></div>
 
-                    <div className="space-y-2">
+                {/* Top Industries */}
+                <div className="mb-8">
+                    <h3
+                        className="text-white/90 mb-4"
+                        style={{
+                            fontFamily: "Inter, system-ui, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            letterSpacing: "0.05em",
+                        }}
+                    >
+                        Top Industries
+                    </h3>
+
+                    <div className="space-y-3">
                         {Object.entries(topIndustries)
                             .sort(([, a], [, b]) => b - a)
                             .slice(0, 3)
                             .map(([industry, count]) => (
                                 <div
                                     key={industry}
-                                    className="flex items-center justify-between text-sm"
+                                    className="flex items-center justify-between"
                                 >
-                                    <span className="text-white/90">
+                                    <span
+                                        className="text-white/70"
+                                        style={{
+                                            fontFamily:
+                                                "Inter, system-ui, sans-serif",
+                                            fontSize: "13px",
+                                            fontWeight: "400",
+                                        }}
+                                    >
                                         {industry}
                                     </span>
-                                    <span className="text-yellow-400">
+                                    <span
+                                        style={{
+                                            fontFamily: "Inter Mono, monospace",
+                                            fontSize: "12px",
+                                            fontWeight: "400",
+                                            color: "#48A9A6",
+                                        }}
+                                    >
                                         {count}
                                     </span>
                                 </div>
@@ -163,26 +256,49 @@ export function FeedbackPanel({ people, onClose }: FeedbackPanelProps) {
                     </div>
                 </div>
 
-                {/* Generations */}
-                <div className="mb-6">
-                    <div className="flex items-center gap-2 mb-3">
-                        <BarChart className="w-4 h-4 text-yellow-400" />
-                        <span className="text-sm text-yellow-400">
-                            GENERATIONS
-                        </span>
-                    </div>
+                {/* Separator */}
+                <div className="w-full h-px bg-gray-800 mb-8"></div>
 
-                    <div className="space-y-2">
+                {/* Generations */}
+                <div className="mb-8">
+                    <h3
+                        className="text-white/90 mb-4"
+                        style={{
+                            fontFamily: "Inter, system-ui, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            letterSpacing: "0.05em",
+                        }}
+                    >
+                        Generations
+                    </h3>
+
+                    <div className="space-y-3">
                         {Object.entries(generations).map(
                             ([generation, count]) => (
                                 <div
                                     key={generation}
-                                    className="flex items-center justify-between text-sm"
+                                    className="flex items-center justify-between"
                                 >
-                                    <span className="text-white/90">
+                                    <span
+                                        className="text-white/70"
+                                        style={{
+                                            fontFamily:
+                                                "Inter, system-ui, sans-serif",
+                                            fontSize: "13px",
+                                            fontWeight: "400",
+                                        }}
+                                    >
                                         {generation}
                                     </span>
-                                    <span className="text-yellow-400">
+                                    <span
+                                        style={{
+                                            fontFamily: "Inter Mono, monospace",
+                                            fontSize: "12px",
+                                            fontWeight: "400",
+                                            color: "#F5D76E",
+                                        }}
+                                    >
                                         {count}
                                     </span>
                                 </div>
@@ -191,35 +307,111 @@ export function FeedbackPanel({ people, onClose }: FeedbackPanelProps) {
                     </div>
                 </div>
 
-                {/* Key Insights */}
-                <div className="mb-6">
-                    <div className="flex items-center gap-2 mb-3">
-                        <MessageSquare className="w-4 h-4 text-yellow-400" />
-                        <span className="text-sm text-yellow-400">
-                            KEY INSIGHTS
-                        </span>
-                    </div>
+                {/* Separator */}
+                <div className="w-full h-px bg-gray-800 mb-8"></div>
 
-                    <Card className="bg-white/5 border-white/10 p-3">
-                        <ul className="text-xs text-white/80 space-y-2">
-                            <li>• Gen X shows highest engagement (67%)</li>
-                            <li>• Fintech professionals most receptive</li>
-                            <li>• Urban demographics prefer innovation</li>
-                            <li>• 25-49 age group drives sentiment</li>
+                {/* Key Insights */}
+                <div className="mb-10">
+                    <h3
+                        className="text-white/90 mb-4"
+                        style={{
+                            fontFamily: "Inter, system-ui, sans-serif",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            letterSpacing: "0.05em",
+                        }}
+                    >
+                        Key Insights
+                    </h3>
+
+                    <div
+                        className="p-4 rounded-sm"
+                        style={{
+                            background: "rgba(255, 255, 255, 0.02)",
+                            border: "1px solid #1C1C1C",
+                        }}
+                    >
+                        <ul className="space-y-3">
+                            <li
+                                className="flex items-start gap-3 text-white/70"
+                                style={{
+                                    fontFamily: "Inter, system-ui, sans-serif",
+                                    fontSize: "12px",
+                                    fontWeight: "400",
+                                    lineHeight: "1.4",
+                                }}
+                            >
+                                <span className="text-white/40 mt-1">•</span>
+                                Gen X shows highest engagement (67%)
+                            </li>
+                            <li
+                                className="flex items-start gap-3 text-white/70"
+                                style={{
+                                    fontFamily: "Inter, system-ui, sans-serif",
+                                    fontSize: "12px",
+                                    fontWeight: "400",
+                                    lineHeight: "1.4",
+                                }}
+                            >
+                                <span className="text-white/40 mt-1">•</span>
+                                Fintech professionals most receptive
+                            </li>
+                            <li
+                                className="flex items-start gap-3 text-white/70"
+                                style={{
+                                    fontFamily: "Inter, system-ui, sans-serif",
+                                    fontSize: "12px",
+                                    fontWeight: "400",
+                                    lineHeight: "1.4",
+                                }}
+                            >
+                                <span className="text-white/40 mt-1">•</span>
+                                Urban demographics prefer innovation
+                            </li>
+                            <li
+                                className="flex items-start gap-3 text-white/70"
+                                style={{
+                                    fontFamily: "Inter, system-ui, sans-serif",
+                                    fontSize: "12px",
+                                    fontWeight: "400",
+                                    lineHeight: "1.4",
+                                }}
+                            >
+                                <span className="text-white/40 mt-1">•</span>
+                                25-49 age group drives sentiment
+                            </li>
                         </ul>
-                    </Card>
+                    </div>
                 </div>
 
                 {/* Export Options */}
                 <div className="space-y-3">
-                    <Button className="w-full bg-yellow-600 hover:bg-yellow-700 text-black">
-                        EXPORT FULL REPORT
+                    <Button
+                        className="w-full text-white border border-white/20 hover:bg-white/5 hover:border-white/30 transition-all duration-200"
+                        style={{
+                            background: "#1A1A1A",
+                            fontFamily: "Inter, system-ui, sans-serif",
+                            fontSize: "13px",
+                            fontWeight: "500",
+                            height: "40px",
+                            letterSpacing: "0.02em",
+                        }}
+                    >
+                        Export Full Report
                     </Button>
                     <Button
                         variant="outline"
-                        className="w-full border-yellow-500/50 text-yellow-400 hover:bg-yellow-400/10"
+                        className="w-full border-white/10 text-white/70 hover:bg-white/5 hover:border-white/20 hover:text-white transition-all duration-200"
+                        style={{
+                            fontFamily: "Inter, system-ui, sans-serif",
+                            fontSize: "13px",
+                            fontWeight: "500",
+                            height: "40px",
+                            letterSpacing: "0.02em",
+                            background: "transparent",
+                        }}
                     >
-                        SAVE TO PROJECT
+                        Save to Project
                     </Button>
                 </div>
             </div>
