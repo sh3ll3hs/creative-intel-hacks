@@ -20,49 +20,52 @@ export default function Page() {
     );
     const [loading, setLoading] = useState(true);
 
-    const { mutateAsync: createVideoDetails } = useMutation({
-        mutationFn: async () => {
-            const response = await apiClient.POST("/{job_id}/video", {
-                params: {
-                    path: {
-                        job_id: params.jobId,
+    const { mutateAsync: createVideoDetails, isPending: creatingVideoDetails } =
+        useMutation({
+            mutationFn: async () => {
+                const response = await apiClient.POST("/{job_id}/video", {
+                    params: {
+                        path: {
+                            job_id: params.jobId,
+                        },
                     },
-                },
-            });
-            return response.data;
-        },
-    });
+                });
+                return response.data;
+            },
+        });
 
-    const { mutateAsync: createPersonas } = useMutation({
-        mutationFn: async () => {
-            const response = await apiClient.POST("/{job_id}/search", {
-                params: {
-                    path: {
-                        job_id: params.jobId,
+    const { mutateAsync: createPersonas, isPending: creatingPersonas } =
+        useMutation({
+            mutationFn: async () => {
+                const response = await apiClient.POST("/{job_id}/search", {
+                    params: {
+                        path: {
+                            job_id: params.jobId,
+                        },
                     },
-                },
-                body: {
-                    sentence: "Tech CEOS in the New York City",
-                },
-            });
-            console.log(response);
-            return response.data;
-        },
-    });
+                    body: {
+                        sentence: "Tech CEOS in the New York City",
+                    },
+                });
+                console.log(response);
+                return response.data;
+            },
+        });
 
-    const { mutateAsync: createResponses } = useMutation({
-        mutationFn: async () => {
-            // // Placeholder endpoint
-            // const response = await apiClient.POST("/{job_id}/responses", {
-            //     params: {
-            //         path: {
-            //             job_id: params.jobId,
-            //         },
-            //     },
-            // });
-            // return response.data;
-        },
-    });
+    const { mutateAsync: createResponses, isPending: creatingResponses } =
+        useMutation({
+            mutationFn: async () => {
+                // // Placeholder endpoint
+                const response = await apiClient.POST("/{job_id}/responses", {
+                    params: {
+                        path: {
+                            job_id: params.jobId,
+                        },
+                    },
+                });
+                return response.data;
+            },
+        });
 
     useEffect(() => {
         const supabase = createBrowserClient();
@@ -107,29 +110,32 @@ export default function Page() {
         fetchData();
 
         // Poll every 5 seconds
-        const interval = setInterval(fetchData, 5000);
+        const interval = setInterval(fetchData, 100);
 
         return () => clearInterval(interval);
     }, [params.jobId]);
 
     return (
-        <div className="p-8">
+        <div className="p-8 min-h-screen text-white relative">
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold">Job ID: {params.jobId}</h1>
                 <div className="flex gap-3">
                     <button
+                        disabled={creatingPersonas}
                         onClick={() => createPersonas()}
                         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                     >
                         Create Personas
                     </button>
                     <button
+                        disabled={creatingVideoDetails}
                         onClick={() => createVideoDetails()}
                         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                     >
                         Create Video Details
                     </button>
                     <button
+                        disabled={creatingResponses}
                         onClick={() => createResponses()}
                         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                     >
@@ -138,15 +144,23 @@ export default function Page() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-6 ">
                 {/* Personas Column */}
-                <div className="border rounded-lg p-4">
+                <div className="border border-white rounded-lg p-4">
                     <h2 className="text-xl font-semibold mb-4">
                         Personas ({personas.length})
                     </h2>
                     <div className="space-y-4">
+                        {creatingPersonas && (
+                            <p className="text-gray-500">
+                                Creating personas...
+                            </p>
+                        )}
                         {personas.map((persona) => (
-                            <div key={persona.id} className="border-b pb-3">
+                            <div
+                                key={persona.id}
+                                className="border-b border-white pb-3"
+                            >
                                 <h3 className="font-medium">
                                     {persona.name || "Unnamed"}
                                 </h3>
@@ -179,8 +193,13 @@ export default function Page() {
                 </div>
 
                 {/* Ad Column */}
-                <div className="border rounded-lg p-4">
+                <div className="border border-white rounded-lg p-4">
                     <h2 className="text-xl font-semibold mb-4">Ad</h2>
+                    {creatingVideoDetails && (
+                        <p className="text-gray-500">
+                            Creating video details...
+                        </p>
+                    )}
                     {ad ? (
                         <div>
                             {ad.video_url && (
@@ -202,13 +221,19 @@ export default function Page() {
                 </div>
 
                 {/* Persona Responses Column */}
-                <div className="border rounded-lg p-4">
+                <div className="border border-white rounded-lg p-4">
                     <h2 className="text-xl font-semibold mb-4">
                         Responses ({personaResponses.length})
                     </h2>
+                    {creatingResponses && (
+                        <p className="text-gray-500">Creating responses...</p>
+                    )}
                     <div className="space-y-4">
                         {personaResponses.map((response) => (
-                            <div key={response.id} className="border-b pb-3">
+                            <div
+                                key={response.id}
+                                className="border-b border-white pb-3"
+                            >
                                 <p className="text-xs text-gray-500 mb-2">
                                     Persona ID: {response.persona_id}
                                 </p>

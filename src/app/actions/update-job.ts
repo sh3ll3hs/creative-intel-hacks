@@ -25,7 +25,7 @@ export async function updateJob(
         throw new Error(`Failed to create job: ${jobError.message}`);
     }
 
-    redirect(`/jobs/${jobId}`);
+    redirect(`/stable/jobs/${jobId}`);
 
     return jobData;
 }

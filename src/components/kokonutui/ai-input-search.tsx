@@ -59,8 +59,8 @@ export default function AI_Input_Search({
                     aria-label="Search input container"
                     className={cn(
                         "relative flex flex-col rounded-xl transition-all duration-200 w-full text-left cursor-text",
-                        "ring-1 ring-black/10 dark:ring-white/10",
-                        isFocused && "ring-black/20 dark:ring-white/20"
+                        "ring-1 ring-gray-200",
+                        isFocused && "ring-gray-300"
                     )}
                     onClick={handleContainerClick}
                     onKeyDown={(e) => {
@@ -74,7 +74,7 @@ export default function AI_Input_Search({
                             id="ai-input-04"
                             value={value}
                             placeholder="Search the web..."
-                            className="w-full rounded-xl rounded-b-none px-4 py-3 bg-black/5 dark:bg-white/5 border-none dark:text-white placeholder:text-black/70 dark:placeholder:text-white/70 resize-none focus-visible:ring-0 leading-[1.2]"
+                            className="w-full rounded-xl rounded-b-none px-4 py-3 bg-gray-50 border-none text-gray-900 placeholder:text-gray-500 resize-none focus-visible:ring-0 leading-[1.2]"
                             ref={textareaRef}
                             onFocus={handleFocus}
                             onBlur={handleBlur}
@@ -91,11 +91,11 @@ export default function AI_Input_Search({
                         />
                     </div>
 
-                    <div className="h-12 bg-black/5 dark:bg-white/5 rounded-b-xl">
+                    <div className="h-12 bg-gray-50 rounded-b-xl">
                         <div className="absolute left-3 bottom-3 flex items-center gap-2">
-                            <label className="cursor-pointer rounded-lg p-2 bg-black/5 dark:bg-white/5">
+                            <label className="cursor-pointer rounded-lg p-2 bg-gray-100 hover:bg-gray-200 transition-colors">
                                 <input type="file" className="hidden" />
-                                <Paperclip className="w-4 h-4 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors" />
+                                <Paperclip className="w-4 h-4 text-gray-500 hover:text-gray-700 transition-colors" />
                             </label>
                             <button
                                 type="button"
@@ -106,7 +106,7 @@ export default function AI_Input_Search({
                                     "rounded-full transition-all flex items-center gap-2 px-1.5 py-1 border h-8 cursor-pointer",
                                     showSearch
                                         ? "bg-sky-500/15 border-sky-400 text-sky-500"
-                                        : "bg-black/5 dark:bg-white/5 border-transparent text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white "
+                                        : "bg-gray-100 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-200"
                                 )}
                             >
                                 <div className="w-4 h-4 flex items-center justify-center shrink-0">
@@ -166,7 +166,7 @@ export default function AI_Input_Search({
                                     "rounded-lg p-2 transition-colors",
                                     value
                                         ? "bg-sky-500/15 text-sky-500"
-                                        : "bg-black/5 dark:bg-white/5 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white cursor-pointer"
+                                        : "bg-gray-100 text-gray-500 hover:text-gray-700 hover:bg-gray-200 cursor-pointer"
                                 )}
                             >
                                 <Send className="w-4 h-4" />

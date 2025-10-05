@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
+import { StableSpaceBackground } from "./StableSpaceBackground";
 
 export default function QueryProvider({
     children,
@@ -12,7 +13,10 @@ export default function QueryProvider({
 
     return (
         <QueryClientProvider client={queryClient}>
-            {children}
+            <div className="relative min-h-screen overflow-hidden">
+                <StableSpaceBackground />
+                {children}
+            </div>
         </QueryClientProvider>
     );
 }
