@@ -14,51 +14,51 @@ interface ProjectDashboardProps {
 const mockProjects: Project[] = [
     {
         id: "1",
-        title: "hackthenorth",
+        title: "nexus-ai",
         date: "2024-09-14",
-        progress: 0,
-        phase: "Phase 1",
-        description: "You are on track to reach engagement goals.",
+        progress: 85,
+        phase: "Phase 3",
+        description: "Advanced AI simulation showing strong market validation.",
     },
     {
         id: "2",
-        title: "fsf",
+        title: "quantum-leap",
         date: "2024-09-14",
-        progress: 0,
-        phase: "Phase 1",
-        description: "You are on track to reach engagement goals.",
+        progress: 42,
+        phase: "Phase 2",
+        description: "Quantum computing market analysis in progress.",
     },
     {
         id: "3",
-        title: "ytytvt",
+        title: "cyber-sentinel",
         date: "2024-09-14",
-        progress: 0,
-        phase: "Phase 1",
-        description: "You are on track to reach engagement goals.",
+        progress: 67,
+        phase: "Phase 2",
+        description: "Cybersecurity market research showing positive trends.",
     },
     {
         id: "4",
-        title: "yco",
+        title: "bio-sync",
         date: "2024-09-14",
-        progress: 0,
+        progress: 23,
         phase: "Phase 1",
-        description: "You are on track to reach engagement goals.",
+        description: "Biotechnology simulation data collection phase.",
     },
     {
         id: "5",
-        title: "vapi",
+        title: "eco-vision",
         date: "2024-09-14",
-        progress: 0,
-        phase: "Phase 1",
-        description: "You are on track to reach engagement goals.",
+        progress: 91,
+        phase: "Phase 4",
+        description: "Environmental tech market analysis nearly complete.",
     },
     {
         id: "6",
-        title: "ye",
+        title: "space-ops",
         date: "2024-09-14",
-        progress: 0,
+        progress: 15,
         phase: "Phase 1",
-        description: "You are on track to reach engagement goals.",
+        description: "Space technology market research initialization.",
     },
 ];
 
@@ -243,7 +243,11 @@ export function ProjectDashboard({
 
                                                 {/* Progress Bar - Terminal Style */}
                                                 <div className="relative">
-                                                    <div className="font-mono text-[10px] text-[#666666] tracking-wider">
+                                                    <div className={`font-mono text-[10px] tracking-wider ${
+                                                        project.progress >= 70 ? 'text-green-400' : 
+                                                        project.progress >= 40 ? 'text-yellow-400' : 
+                                                        'text-red-400'
+                                                    }`}>
                                                         [
                                                         {"█".repeat(
                                                             Math.floor(
