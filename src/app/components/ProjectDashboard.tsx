@@ -7,64 +7,17 @@ import type { Project } from "@/types/shared";
 
 interface ProjectDashboardProps {
     username: string;
+    projects: Project[];
     onProjectSelect: (project: Project) => void;
+    onNewProject: () => void;
     onLogout: () => void;
 }
 
-const mockProjects: Project[] = [
-    {
-        id: "1",
-        title: "hackthenorth",
-        date: "2024-09-14",
-        progress: 0,
-        phase: "Phase 1",
-        description: "You are on track to reach engagement goals.",
-    },
-    {
-        id: "2",
-        title: "fsf",
-        date: "2024-09-14",
-        progress: 0,
-        phase: "Phase 1",
-        description: "You are on track to reach engagement goals.",
-    },
-    {
-        id: "3",
-        title: "ytytvt",
-        date: "2024-09-14",
-        progress: 0,
-        phase: "Phase 1",
-        description: "You are on track to reach engagement goals.",
-    },
-    {
-        id: "4",
-        title: "yco",
-        date: "2024-09-14",
-        progress: 0,
-        phase: "Phase 1",
-        description: "You are on track to reach engagement goals.",
-    },
-    {
-        id: "5",
-        title: "vapi",
-        date: "2024-09-14",
-        progress: 0,
-        phase: "Phase 1",
-        description: "You are on track to reach engagement goals.",
-    },
-    {
-        id: "6",
-        title: "ye",
-        date: "2024-09-14",
-        progress: 0,
-        phase: "Phase 1",
-        description: "You are on track to reach engagement goals.",
-    },
-];
-
 export function ProjectDashboard({
     username,
+    projects,
     onProjectSelect,
+    onNewProject,
     onLogout,
 }: ProjectDashboardProps) {
     return (
@@ -143,6 +96,7 @@ export function ProjectDashboard({
                                 </p>
                             </div>
                             <Button
+                                onClick={onNewProject}
                                 className="text-[#E5E5E5] hover:text-[#000000] hover:bg-[#E5E5E5] border border-[#E5E5E5] bg-[#000000] transition-all duration-200 font-mono uppercase tracking-wide text-xs px-4 py-2"
                                 style={{ borderRadius: "0px" }}
                             >
@@ -156,7 +110,7 @@ export function ProjectDashboard({
                 <div className="relative z-10 px-8 pb-12">
                     <div className="max-w-7xl mx-auto">
                         <div className="grid grid-cols-3 gap-6">
-                            {mockProjects.map((project, index) => (
+                            {projects.map((project, index) => (
                                 <motion.div
                                     key={project.id}
                                     initial={{ opacity: 0, y: 20 }}

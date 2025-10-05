@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ChevronLeft, LogOut, Play } from "lucide-react";
 import { InteractiveNetworkViz } from "@/app/components/InteractiveNetworkViz";
 import { TowaReactionModal } from "@/app/components/TowaReactionModal";
-import { FeedbackPanel } from "@/app/components/FeedbackPanel";
+import { PersonasPanel } from "@/app/components/PersonasPanel";
 import { MissionStatus } from "@/app/components/MissionStatus";
 import { getPersonasByJobId, getJobById, getPersonaResponses } from "@/app/actions/personas";
 import { mockPeople } from "@/lib/mockPeople";
@@ -199,7 +199,7 @@ export default function DashboardPage() {
 
             <AnimatePresence>
                 {showFeedback && (
-                    <FeedbackPanel
+                    <PersonasPanel
                         people={personas}
                         onClose={() => setShowFeedback(false)}
                     />
