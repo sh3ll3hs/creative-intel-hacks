@@ -2,8 +2,6 @@
 
 import { createServerClient } from "@/lib/supabase/server";
 
-import { redirect } from "next/navigation";
-
 export async function updateJob(
     jobId: string,
     demographic: string,
@@ -22,10 +20,8 @@ export async function updateJob(
         .single();
 
     if (jobError) {
-        throw new Error(`Failed to create job: ${jobError.message}`);
+        throw new Error(`Failed to update job: ${jobError.message}`);
     }
-
-    redirect(`/stable/jobs/${jobId}`);
 
     return jobData;
 }

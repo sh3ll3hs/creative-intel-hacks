@@ -194,11 +194,30 @@ export function InteractiveNetworkViz({
     onRunSimulation,
     people,
 }: InteractiveNetworkVizProps) {
-    const [personas] = useState<PersonaNode[]>(generatePersonas);
+    // Note: isRunning prop is available for future use
+    // Use the people prop if provided, otherwise generate personas
+    const shouldUsePeople = people && people.length > 0;
+    const [personas] = useState<PersonaNode[]>(() => {
+        if (shouldUsePeople) {
+            // Convert people to PersonaNode format
+            return people.map((person, index) => ({
+                ...person,
+                color: `hsl(${index * 30}, 70%, 60%)`,
+                x:
+                    Math.cos((index / people.length) * 2 * Math.PI) *
+                    (200 + Math.random() * 80),
+                y:
+                    Math.sin((index / people.length) * 2 * Math.PI) *
+                    (200 + Math.random() * 80),
+                engagement: 45 + Math.random() * 50,
+            }));
+        }
+        return generatePersonas();
+    });
     const [hoveredNode, setHoveredNode] = useState<PersonaNode | null>(null);
     const [selectedNode, setSelectedNode] = useState<PersonaNode | null>(null);
     const [showPersonaPanel, setShowPersonaPanel] = useState(false);
-    const [simulationActive, setSimulationActive] = useState(false);
+    const [simulationActive, setSimulationActive] = useState(isRunning);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -423,22 +442,19 @@ export function InteractiveNetworkViz({
                     }}
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{
-                        scale: 1,
+                        scale: simulationActive ? 1.5 : 1,
                         opacity: 1,
-                        ...(simulationActive && {
-                            scale: [1, 1.5, 1],
-                            boxShadow: [
-                                `0 0 10px ${persona.color}40`,
-                                `0 0 30px ${persona.color}80`,
-                                `0 0 10px ${persona.color}40`,
-                            ],
-                        }),
+                        boxShadow: simulationActive
+                            ? `0 0 30px ${persona.color}80`
+                            : `0 0 10px ${persona.color}40`,
                     }}
                     transition={{
                         delay: index * 0.1,
                         duration: simulationActive ? 0.8 : 0.6,
-                        type: "spring",
+                        type: simulationActive ? "tween" : "spring",
                         stiffness: 200,
+                        repeat: simulationActive ? Infinity : 0,
+                        repeatType: simulationActive ? "reverse" : "loop",
                     }}
                     onHoverStart={() => setHoveredNode(persona)}
                     onHoverEnd={() => setHoveredNode(null)}
@@ -536,41 +552,12 @@ export function InteractiveNetworkViz({
                             </div>
 
                             <div className="text-sm text-white/80 italic">
-                                "{hoveredNode.feedback}"
+                                &ldquo;{hoveredNode.feedback}&rdquo;
                             </div>
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            {/* Run simulation button */}
-            <motion.div
-                className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1 }}
-            >
-                <motion.button
-                    onClick={handleRunSimulation}
-                    disabled={simulationActive}
-                    className="px-6 py-3 bg-gradient-to-r from-teal-400 to-blue-500 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ fontFamily: "Space Grotesk, Inter, sans-serif" }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                >
-                    {simulationActive
-                        ? "Running Simulation..."
-                        : "Run Simulation"}
-                </motion.button>
-            </motion.div>
-
-            {/* Powered by footer */}
-            <div
-                className="absolute bottom-4 right-4 text-xs text-white/30"
-                style={{ fontFamily: "Space Grotesk, Inter, sans-serif" }}
-            >
-                Powered by Twelve Labs + ElevenLabs
-            </div>
 
             {/* Persona Reaction Panel */}
             <AnimatePresence>
