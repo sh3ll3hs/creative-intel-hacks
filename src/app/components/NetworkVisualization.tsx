@@ -106,26 +106,36 @@ export function NetworkVisualization({
 
     // Static rotation - no auto-rotation
 
-    const getPersonColor = (reaction: string) => {
-        switch (reaction) {
-            case "intrigued":
-                return {
-                    bg: "from-green-400 to-green-600",
-                    dot: "bg-green-400",
-                };
-            case "inspired":
-                return { bg: "from-blue-400 to-blue-600", dot: "bg-blue-400" };
-            case "partial":
-                return {
-                    bg: "from-orange-400 to-orange-600",
-                    dot: "bg-orange-400",
-                };
-            default:
-                return {
-                    bg: "from-purple-400 to-purple-600",
-                    dot: "bg-purple-400",
-                };
-        }
+    const getPersonColor = (reaction: string, index: number) => {
+        const colors = [
+            "bg-green-400", "bg-blue-400", "bg-purple-400", "bg-orange-400", 
+            "bg-pink-400", "bg-cyan-400", "bg-yellow-400", "bg-red-400",
+            "bg-indigo-400", "bg-teal-400", "bg-lime-400", "bg-rose-400"
+        ];
+        const gradients = [
+            "from-green-400 to-green-600", "from-blue-400 to-blue-600", 
+            "from-purple-400 to-purple-600", "from-orange-400 to-orange-600",
+            "from-pink-400 to-pink-600", "from-cyan-400 to-cyan-600",
+            "from-yellow-400 to-yellow-600", "from-red-400 to-red-600",
+            "from-indigo-400 to-indigo-600", "from-teal-400 to-teal-600",
+            "from-lime-400 to-lime-600", "from-rose-400 to-rose-600"
+        ];
+        
+        const colorIndex = index % colors.length;
+        return {
+            bg: gradients[colorIndex],
+            dot: colors[colorIndex],
+        };
+    };
+
+    const getPersonSize = (index: number) => {
+        const sizes = [
+            { w: "w-2", h: "h-2", scale: "scale-75" },
+            { w: "w-3", h: "h-3", scale: "scale-100" },
+            { w: "w-4", h: "h-4", scale: "scale-125" },
+            { w: "w-5", h: "h-5", scale: "scale-150" },
+        ];
+        return sizes[index % sizes.length];
     };
 
     return (
@@ -179,7 +189,7 @@ export function NetworkVisualization({
                                 {/* Subtle static glow - no pulsing */}
                                 <div
                                     className={`absolute inset-0 rounded-full ${
-                                        getPersonColor(person.reaction).dot
+                                        getPersonColor(person.reaction, index).dot
                                     } opacity-30`}
                                     style={{
                                         transform: "scale(1.2)",
@@ -190,37 +200,48 @@ export function NetworkVisualization({
                                 {/* Main Star Dot - Static */}
                                 <div
                                     className={`
-                  w-3 h-3 rounded-full ${getPersonColor(person.reaction).dot}
+                  ${getPersonSize(index).w} ${getPersonSize(index).h} rounded-full ${getPersonColor(person.reaction, index).dot}
                   border border-white/40 backdrop-blur-sm
                   group-hover:scale-150 group-hover:border-white/80
                   transition-all duration-300 relative z-10
                 `}
                                     style={{
-                                        boxShadow: `0 2px 4px ${getPersonColor(
-                                            person.reaction
+                                        boxShadow: `0 0 20px ${getPersonColor(
+                                            person.reaction, index
                                         )
                                             .dot.replace("bg-", "rgba(")
-                                            .replace("-400", ", 0.3)")}`,
+                                            .replace("-400", ", 0.8)")}, 0 0 40px ${getPersonColor(
+                                            person.reaction, index
+                                        )
+                                            .dot.replace("bg-", "rgba(")
+                                            .replace("-400", ", 0.4)")}, 0 0 60px ${getPersonColor(
+                                            person.reaction, index
+                                        )
+                                            .dot.replace("bg-", "rgba(")
+                                            .replace("-400", ", 0.2)")}`,
                                     }}
                                 >
-                                    {/* Static inner highlight */}
-                                    <div className="absolute inset-0.5 rounded-full bg-white/20" />
+                                    {/* Bright inner highlight */}
+                                    <div className="absolute inset-0.5 rounded-full bg-white/40" />
+                                    
+                                    {/* Extra bright shine effect */}
+                                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/60 via-transparent to-transparent opacity-70" />
                                 </div>
 
                                 {/* Hover Info */}
-                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none scale-0 group-hover:scale-100">
-                                    <div className="bg-black/90 text-white text-xs p-2 rounded border border-white/20 whitespace-nowrap backdrop-blur-sm">
+                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none scale-0 group-hover:scale-110">
+                                    <div className="bg-black/95 text-white text-sm p-4 rounded-lg border border-white/30 whitespace-nowrap backdrop-blur-sm shadow-2xl">
                                         <div className="text-center">
-                                            <div className="text-white">
+                                            <div className="text-white text-base font-semibold">
                                                 {person.name}
                                             </div>
-                                            <div className="text-white/60">
+                                            <div className="text-white/70 text-sm">
                                                 {person.title}
                                             </div>
-                                            <div className="text-white/60">
+                                            <div className="text-white/70 text-sm">
                                                 {person.location}
                                             </div>
-                                            <div className="text-green-400 text-[10px] mt-1">
+                                            <div className="text-green-400 text-xs mt-2 font-medium">
                                                 Click to explore →
                                             </div>
                                         </div>

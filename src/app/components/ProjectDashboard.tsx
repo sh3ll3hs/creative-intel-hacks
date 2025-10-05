@@ -197,7 +197,17 @@ export function ProjectDashboard({
 
                                                 {/* Progress Bar - Terminal Style */}
                                                 <div className="relative">
-                                                    <div className="font-mono text-[10px] text-[#666666] tracking-wider">
+                                                    <div
+                                                        className={`font-mono text-[10px] tracking-wider ${
+                                                            project.progress >=
+                                                            70
+                                                                ? "text-green-400"
+                                                                : project.progress >=
+                                                                  40
+                                                                ? "text-yellow-400"
+                                                                : "text-red-400"
+                                                        }`}
+                                                    >
                                                         [
                                                         {"█".repeat(
                                                             Math.floor(

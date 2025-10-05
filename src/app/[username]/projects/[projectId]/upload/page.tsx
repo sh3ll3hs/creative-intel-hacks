@@ -4,8 +4,22 @@ import { useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { motion } from "motion/react";
-import { Upload, ChevronLeft, LogOut } from "lucide-react";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { motion, AnimatePresence } from "motion/react";
+import {
+    Upload,
+    ChevronLeft,
+    LogOut,
+    ChevronDown,
+    ChevronUp,
+    Filter,
+} from "lucide-react";
 import { parseSearchQuery } from "@/lib/parseSearchQuery";
 import { mockPeople } from "@/lib/mockPeople";
 import { createBrowserClient } from "@/lib/supabase/client";
@@ -13,6 +27,7 @@ import type { Tables } from "@/database.types";
 import { useMutation } from "@tanstack/react-query";
 import apiClient from "@/lib/api-client";
 import { updateJob as updateJobAction } from "@/app/actions/update-job";
+import Filters from "@/app/components/Filters";
 
 type Ad = Tables<"ads">;
 
@@ -33,7 +48,7 @@ export default function UploadPage() {
     // Video analysis mutation
     const { mutate: analyzeVideo, isPending: analyzingVideo } = useMutation({
         mutationFn: async () => {
-            const response = await apiClient.POST("/{job_id}/video", {
+            const response = await apiClient.POST("/{job_id}/video-dummy", {
                 params: {
                     path: {
                         job_id: projectId as string,
@@ -162,7 +177,7 @@ export default function UploadPage() {
     };
 
     return (
-        <div className="h-screen bg-black text-white overflow-hidden relative">
+        <div className="h-screen bg-black text-white overflow-scroll relative">
             {/* Header */}
             <div className="border-b border-gray-800/50 bg-black/80 backdrop-blur-sm relative z-50">
                 <div className="flex items-center justify-between px-6 py-4">
@@ -390,7 +405,7 @@ export default function UploadPage() {
                             }}
                         />
                     </div>
-
+                    <Filters />
                     {/* Run Simulation Button */}
                     <motion.div
                         whileHover={{ scale: 1.02 }}
